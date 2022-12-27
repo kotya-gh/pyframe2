@@ -1,0 +1,10 @@
+{
+    "log":{
+        "rotation":7
+        
+    },
+    "replication":{
+        "exec":0,
+        "files":["file path1", "file path2"]
+    }
+}
