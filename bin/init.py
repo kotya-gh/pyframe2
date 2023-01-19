@@ -145,7 +145,7 @@ class Init:
     # @see ConvertTo-SecureString
     # @throws 文字列復号で例外発生時、$falseを返す。
 
-    ## ??? ###
+    ## →ネットワークマウント用の認証情報作成時に使用したと思われる。 ###
 
 
     # [INIT]ユーザ設定ファイルのレプリケーション
