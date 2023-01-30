@@ -30,12 +30,11 @@ class Calc:
     def UnitConversion(self, size, unit, carrysize=1024):
         if(((unit in self.__units) == False) or (isinstance(carrysize, int) == False)):
             return False, False
-        import math
         try:
             src_size, src_unit=self.GetSizeAndUnit(size)
         except:
             return False, False
-
+        import math
         i = self.__units.index(unit.upper())
         j = self.__units.index(src_unit.upper())
         dst_size = round(src_size / carrysize ** (i-j), 2)
