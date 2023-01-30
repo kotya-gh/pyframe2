@@ -28,8 +28,8 @@ class Calc:
     # @see math.round
     # @throws sizeのフォーマット不正時、およびunitの文字列が不正時、Falseとする。
     def UnitConversion(self, size, unit, carrysize=1024):
-        if((unit in self.__units) == False):
-            return False
+        if(((unit in self.__units) == False) or (isinstance(carrysize, int) == False)):
+            return False, False
         import math
         try:
             src_size, src_unit=self.GetSizeAndUnit(size)
@@ -58,7 +58,10 @@ class Calc:
         import re
         numarr=re.split('[A-z]+', size)
         unit=size[len(numarr[0]):]
-        num=float(numarr[0].replace(',', ''))
+        try:
+            num=float(numarr[0].replace(',', ''))
+        except:
+            return False, False
 
         if(unit in self.__units):
             return num, unit
