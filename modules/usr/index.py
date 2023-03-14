@@ -61,7 +61,8 @@ class UsrScript:
     def execUsrScript(self, command, *args):
         args=list(args)
         cmdline=[]
-        cmdline.append(command)
+        #cmdline.append(command)
+        cmdline.extend(command.split())
         if args:
             cmdline.extend(args)
         stdout=""
