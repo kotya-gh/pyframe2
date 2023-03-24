@@ -39,7 +39,8 @@ class Apps:
     # @throws なし
     def GetService(self):
         usr=UsrScript()
-        servicelist={}
+        #servicelist={}
+        servicelist={'all':[], 'static':[], 'enabled':[], 'disabled':[], 'running':[], 'exited':[], 'failed':[], 'dead': []}
 
         getServiceInfo=[
             {'command':"list-unit-files", 'state':['all', 'static', 'enabled', 'disabled']},
@@ -63,7 +64,8 @@ class Apps:
                     getUnit, getState=tmp
                 for state in listdata['state']:
                     if(getState == state or state=='all'):
-                        list(servicelist[state]).append({'unit':getUnit, 'state':getState})
+                        #list(servicelist[state]).append({'unit':getUnit, 'state':getState})
+                        servicelist[state].append({'unit':getUnit, 'state':getState})
         self.servicelist=servicelist
         return self.servicelist
 
