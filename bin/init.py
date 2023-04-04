@@ -134,20 +134,6 @@ class Init:
         path_conf_require=self.__GetExistFilePath(self.__path_conf.joinpath('require.json'))
         return self.__JsonFileDecode(path_conf_require)
 
-    # [Crypt]文字列の復号
-    #
-    # $encryptで指定する文字列をSecureStringで復号した文字列を返す。
-    # $encryptが空、まはた復号失敗時は$falseを返す。
-    #
-    # @access public
-    # @param string $encrypt 暗号化文字列
-    # @return string $plaintext 復号文字列
-    # @see ConvertTo-SecureString
-    # @throws 文字列復号で例外発生時、$falseを返す。
-
-    ## →ネットワークマウント用の認証情報作成時に使用したと思われる。 ###
-
-
     # [INIT]ユーザ設定ファイルのレプリケーション
     #
     # コンポーネントディレクトリ配下のJsonファイル（ユーザ設定ファイル）を、
@@ -276,28 +262,8 @@ COMP_CONF={'component_name':INIT._Init__GetComponentName(), 'path_log':INIT._Ini
 tmp=INIT._Init__GetComponentConfigure()
 len(tmp) == 0 or COMP_CONF.update(tmp)
 
-
-
-import pprint
-#pprint.pprint(vars(INIT))
-#pprint.pprint(COMP_CONF)
-
-#モジュール読み込み箇所
-#hoge=import_module(".samp2_2", "samp2_mod")
-
-# # import configure process
-# # モジュールクラスの読み込み
-# foreach($INIT->GetRequiredConfigure()['import_module'] as $module){
-#     try {
-#         is_file($tmp=$INIT->JoinPath($INIT->JoinPath($INIT->GetModulesPath(), $module), 'index.php')) and require($tmp);
-#     } catch ( Exception $ex ) {
-#         echo $ex.PHP_EOL;
-#         exit(1); 
-#     }
-# }
-
-# # set user configuration
-# # ユーザ設定ファイルの読み込み
+# set user configuration
+# ユーザ設定ファイルの読み込み
 USR_CONF=INIT._Init__GetUserConfigure()
 
 # set intl
@@ -306,7 +272,7 @@ LOCALE=INIT._Init__GetRequiredConfigure()['locale']
 from intl.index import Intl
 INTL=Intl(os.path.join(os.path.dirname(pathlib.Path(sys.argv[0]).resolve()), 'locale'))
 
-# # set user log
+# set user log
 from log.index import Log
 USR_LOG=Log(COMP_CONF)
 USR_MSG=USR_LOG.log_format

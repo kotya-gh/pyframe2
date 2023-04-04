@@ -51,7 +51,7 @@ class Log:
     # @access public
     # @param なし
     # @return bool ログ書き込みの成否
-    # @see Log->MakeLogText, LogRotation->Rotate
+    # @see MakeLogText(), LogRotation()
     # @throws ログ書き込みで例外発生時、FALSEを返す。
     def WriteLog(self):
         rc=True
@@ -99,16 +99,15 @@ class Log:
     #
     # 出力メッセージを整形する。
     # ログフォーマットに適合しない場合FALSEを返す。
-    # eventId、logName、entryTypeのバリデーションを実施し、適合しない場合はFALSEを返す。
     # Log->log_format['message']が空の場合はFALSEを返す。
     # Log->log_format['message']に改行が含まれる場合は改行を削除する。
     # 次のフォーマットでログテキストを作成する。
     # date <Application.INFORMATION> hostname username: [source="App1" eventid="65535"] message
     #
-    # @access private
+    # @access public
     # @param なし
     # @return bool ログメッセージ作成の成否
-    # @see LogValidation->eventId, LogValidation->logName, LogValidation->entryType, Log->GetFormattedDate
+    # @see MakeLogTextPart(), GetFormattedDate()
     # @throws なし
     def MakeLogText(self):
         if(not self.log_format['message']):
@@ -133,7 +132,7 @@ class Log:
     # @access public
     # @param なし
     # @return bool ログメッセージ作成の成否
-    # @see LogValidation->eventId, LogValidation->logName, LogValidation->entryType, Log->GetFormattedDate
+    # @see log_format['event_id'], log_format['log_name'], log_format['entry_type'], GetFormattedDate()
     # @throws なし
     def MakeLogTextPart(self):
         valid=LogValidation()
@@ -160,10 +159,10 @@ class Log:
     # 次のフォーマットで日時情報を作成する。
     # yyyy-MM-dd HH:mm:ss
     #
-    # @access private
+    # @access public
     # @param なし
     # @return string ログ出力用日付情報
-    # @see date
+    # @see format
     # @throws なし
     def GetFormattedDate(self):
         today = datetime.today()
@@ -175,10 +174,10 @@ class Log:
     # 次のフォーマットで日付情報を作成する。
     # yyyymmdd
     #
-    # @access private
+    # @access public
     # @param なし
     # @return string ログファイル名用日付情報
-    # @see date
+    # @see format
     # @throws なし
     def GetLogNameDate(self):
         today = datetime.today()
@@ -200,14 +199,14 @@ class LogRotation:
     # [LogRotation]ログファイル名用日付情報の作成
     #
     # ログローテーション処理を実行する。
-    # $pathで示すファイルが存在しない場合（ログ書き込み時、当日の最初の書き込みである場合）、
+    # pathで示すファイルが存在しない場合（ログ書き込み時、当日の最初の書き込みである場合）、
     # ローテート対象であると判定し、カレントログの削除、指定世代以前の日付付きログファイルの削除を実施する。
     # ローテート対象ファイル削除失敗時はFALSEを返す。
     #
     # @access public
-    # @param string $path 日付付き最新ログファイルのフルパス
-    # @param string $currentPath カレントログファイルのフルパス
-    # @param int $rotation ローテート世代数
+    # @param string path 日付付き最新ログファイルのフルパス
+    # @param string currentPath カレントログファイルのフルパス
+    # @param int rotation ローテート世代数
     # @return bool ローテートの成否
     # @see なし
     # @throws なし
@@ -227,11 +226,12 @@ class LogRotation:
 
         i=0
         for i, log in enumerate(filelist):
-            if(re.match('/^.*_\d{8}\.log$/', log) != None):
+            if(re.match(r'^.*_\d{8}\.log$', log) ):
                 i+=1
                 p=pathlib.Path(log)
-                if(i >= rotation and (p.unlink() == False)):
-                    return False
+                if(i >= rotation):
+                    if(p.unlink() == False):
+                        return False
         return True
 
 # [LogValidation]テキストログのバリデーションに関するクラス
@@ -253,12 +253,12 @@ class LogValidation:
 
     # [LogValidation]イベントIDのバリデーション
     #
-    # $eventIdが一定値以内であることを判定し、boolで返す。
-    # $eventIdは0以上LogValidation->define_max_event_id以下とする。
+    # eventIdが一定値以内であることを判定し、boolで返す。
+    # eventIdは0以上LogValidation->define_max_event_id以下とする。
     # 適合しない場合はFALSEを返す。
     #
     # @access public
-    # @param int $eventId イベントID
+    # @param int eventId イベントID
     # @return bool バリデーションの結果
     # @see なし
     # @throws なし
@@ -267,11 +267,11 @@ class LogValidation:
 
     # [LogValidation]ログネームのバリデーション
     #
-    # $logNameがLogValidation->define_all_log_nameに含まれていることを判定し、boolで返す。
+    # logNameがLogValidation->define_all_log_nameに含まれていることを判定し、boolで返す。
     # 適合しない場合はFALSEを返す。
     #
     # @access public
-    # @param int $logName ログネーム
+    # @param int logName ログネーム
     # @return bool バリデーションの結果
     # @see なし
     # @throws なし
@@ -280,11 +280,11 @@ class LogValidation:
 
     # [LogValidation]エントリータイプのバリデーション
     #
-    # $entryTypeがLogValidation.define_entry_typeに含まれていることを判定し、boolで返す。
+    # entryTypeがLogValidation.define_entry_typeに含まれていることを判定し、boolで返す。
     # 適合しない場合はFALSEを返す。
     #
     # @access public
-    # @param int $entryType エントリータイプ
+    # @param int entryType エントリータイプ
     # @return bool バリデーションの結果
     # @see なし
     # @throws なし

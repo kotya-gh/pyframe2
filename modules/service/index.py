@@ -39,8 +39,7 @@ class Apps:
     # @throws なし
     def GetService(self):
         usr=UsrScript()
-        #servicelist={}
-        servicelist={'all':[], 'static':[], 'enabled':[], 'disabled':[], 'running':[], 'exited':[], 'failed':[], 'dead': []}
+        servicelist={}
 
         getServiceInfo=[
             {'command':"list-unit-files", 'state':['all', 'static', 'enabled', 'disabled']},
@@ -60,12 +59,26 @@ class Apps:
                 tmp=list(filter(None, tmp))
                 getUnit=''
                 getState=''
+
                 if(len(tmp) == 2):
                     getUnit, getState=tmp
+                else:
+                    getUnit=tmp[0]
+                    getState=tmp[3]
+
                 for state in listdata['state']:
                     if(getState == state or state=='all'):
-                        #list(servicelist[state]).append({'unit':getUnit, 'state':getState})
-                        servicelist[state].append({'unit':getUnit, 'state':getState})
+
+                        unitList=[]
+                        unitList.append({'unit':getUnit, 'state':getState})
+
+                        if state in servicelist:
+                            servicelist[state].extend(unitList)
+                        else:
+                            keys=listdata['state']
+                            if state in keys:
+                                servicelist.setdefault(state, unitList)
+
         self.servicelist=servicelist
         return self.servicelist
 
@@ -83,7 +96,7 @@ class Apps:
         if(self.GetService() == False):
             return False
         for srvarr in self.servicelist['all']:
-            if(service in srvarr):
+            if(service in srvarr['unit']):
                 return True
         return False
     
@@ -101,12 +114,10 @@ class Apps:
     def ProcessSearch(self, process):
         usr=UsrScript()
 
-        #result['result'][0]=0
-        #result['rcode']=False
         result={"result":[0]}
         result={'rcode':False}
-        result=usr.execUsrScript(pathlib.Path(us.GetPathUsrBin()).joinpath("procnum.sh"), usr.GetPathUsrRoot(), process)
-        if((not str.isnumeric(result['result'][0])) or (result['result'][0]==0) or (result['rcode'] != 0)):
+        result=usr.execUsrScript(pathlib.Path(usr.GetPathUsrBin()).joinpath("procnum.sh"), usr.GetPathUsrRoot(), process)
+        if((not str.isnumeric(result['result'][0])) or (int(result['result'][0])==0) or (result['rcode'] != 0)):
             return False
         return int(result['result'][0])
 
