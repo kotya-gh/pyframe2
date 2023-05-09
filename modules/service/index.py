@@ -116,7 +116,7 @@ class Apps:
 
         result={"result":[0]}
         result={'rcode':False}
-        result=usr.execUsrScript(pathlib.Path(usr.GetPathUsrBin()).joinpath("procnum.sh"), usr.GetPathUsrRoot(), process)
+        result=usr.execUsrScript(str(pathlib.Path(usr.GetPathUsrBin()).joinpath("procnum.sh")), usr.GetPathUsrRoot(), process)
         if((not str.isnumeric(result['result'][0])) or (int(result['result'][0])==0) or (result['rcode'] != 0)):
             return False
         return int(result['result'][0])
