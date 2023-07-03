@@ -50,7 +50,6 @@ class Init:
 
         # コンポーネント用外部ファイルの内容格納
         self.__conf_user=self.__SetUserConfiture()
-        # パラメタ代入したほうがよい？ジェネレータが反映できない
 
         # モジュールの読み込み
         sys.path.append(str(self.__path_modules))
@@ -159,8 +158,6 @@ class Init:
                 continue
             basename=pathlib.Path(filepath).name
             dstpath=self.__path_script_root.joinpath(basename)
-
-            #ファイル名比較がフルパスになっていないので対応必要（PS,PHP）
 
             if((str(self.__path_script_root.joinpath(basename)) in self.__conflist_user) == False):
                 try:
